@@ -1,0 +1,26 @@
+[gcode_macro PRINT_START]
+gcode:
+  {% set EXTRUDER_TEMP = params.EXTRUDER_TEMP|default(205)|float %}
+  {% set BED_TEMP = params.BED_TEMP|default(60)|float %}
+  PRINT_START_1            ;print start macro 1
+  M140 S{BED_TEMP}         ;set bed temperature and wait
+  M109 S{EXTRUDER_TEMP}    ;set hotend temperature and wait
+  M190 S{BED_TEMP}         ;set bed temperature and do not wait
+  #G32
+  #M117 Bed meshing...
+  BED_MESH_CLEAR
+  #bed_mesh_calibrate
+  #BED_MESH_PROFILE LOAD=am8
+  M117 Ready
+
+[gcode_macro PRINT_START_1]
+gcode:                                    
+    M104 S0    ;cancel set temp
+    M107       ;turn cooling fans off
+    G21        ;set units to mm
+    G90        ;use absolute coordinates
+    M83        ;use relative extrusion
+    G92 E0.0   ;reset e count
+    M220 S100  ;reset speed multiplier
+    G28
+    G0 X110 Y110 Z10 F6000
